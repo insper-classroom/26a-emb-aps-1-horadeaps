@@ -114,6 +114,7 @@ int main() {
             BTN_GAME_flag = 0;
         }else if (BTN_GAME_flag!=0){             // Se errar zera a contagem e os niveis
             printf("Errou\n");
+            sleep_ms(200);
             cancel_alarm(alarm);
             BTN_GAME_flag = 0;
             cont = 0;
