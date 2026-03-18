@@ -18,7 +18,8 @@ const int botao_y =13;
 
 volatile int flag_jogo = 0;
 volatile int flag_resposta_timeout = 0;
-
+volatile int nivel = 0;
+volatile int BTN_GAME_flag = 0; 
 
 int64_t alarm_callback(alarm_id_t id, void *user_data)
 {
@@ -31,22 +32,23 @@ void btn_callback(uint gpio, uint32_t events)
     if(events==0x4){
         if(gpio == botao_inicio){
             flag_jogo=1;
+            nivel=1;
         }
 
         if(gpio == botao_g){
-            flag_jogo=1;
+            BTN_GAME_flag=1;
         }
 
         if(gpio == botao_b){
-            flag_jogo=1;
+            BTN_GAME_flag=2;
         }
 
         if(gpio == botao_r){
-            flag_jogo=1;
+            BTN_GAME_flag=3;
         }
 
         if(gpio == botao_y){
-            flag_jogo=1;
+            BTN_GAME_flag=4;
         }
     }
 }
@@ -83,27 +85,63 @@ int main() {
     
     
     // area das variaveis
-    int lista[] = {0,1,2,3};
+    int lista[] = {1,2,3,4};
+    int cont = 0;
+    nivel = 1;
+    int tamanho = (sizeof(lista)/sizeof(lista[0]));
+
     alarm_id_t alarm;
+    
     while (true) {
         if(flag_jogo){
-            int tamanho = (sizeof(lista)/sizeof(lista[0]));
-            for(int i =0; i<tamanho; i++){
-                if(i!=0){
-                    lose_colour(lista[i-1]);
-                }
+            printf("Nivel: %d!\n",nivel);
+            for(int i =0; i<nivel; i++){            //O nivel controla quantos leds vai ter a sequencia
                 set_colour(lista[i]);
-                sleep_ms(2000);
+                sleep_ms(1000);
+                lose_colour(lista[i]);
             }
-            lose_colour(lista[tamanho-1]);
-            alarm = add_alarm_in_ms(2000, alarm_callback, NULL, false);
+            int game_time_ms=nivel*1000+1000;
+            alarm = add_alarm_in_ms(game_time_ms, alarm_callback, NULL, false);
             flag_jogo = 0;
+            BTN_GAME_flag=0;
+            printf("Valendo!\n");
+        }
+
+        if (BTN_GAME_flag==lista[cont]){        //verifica se apertou o botão correto
+            printf("Acertou\n");
+            cont++;
+            sleep_ms(200);
+            BTN_GAME_flag = 0;
+        }else if (BTN_GAME_flag!=0){             // Se errar zera a contagem e os niveis
+            printf("Errou\n");
+            cancel_alarm(alarm);
+            BTN_GAME_flag = 0;
+            cont = 0;
+            nivel = 1;
+            sleep_ms(2000);
+        }
+
+        if(cont == nivel){   
+            cancel_alarm(alarm);                     // avança para o proximo nivel
+            nivel++;
+            cont = 0;
+            flag_jogo = 1;
+            printf("Proximo nivel\n");
+        }
+
+        if(nivel > tamanho){ 
+            nivel=1;    
+            cancel_alarm(alarm); 
+            flag_jogo = 0;                  //Finaliza o jogo
+            printf("Você venceu!\n");
         }
 
         if(flag_resposta_timeout){
-            printf("se fudeu \n");
-            flag_resposta_timeout=0;
+            printf("Time out error\n");
+            flag_resposta_timeout = 0;
+            nivel = 1;
+            cont=0;
+
         }
-        sleep_ms(1000);
     }
 }

@@ -12,31 +12,31 @@ void lcd_init(){
 }
 
 void set_colour(int cor){
-    if(cor == 0){
+    if(cor == 1){
         gpio_put(pin_g,1);
     }
-    if(cor == 1){
+    if(cor == 2){
         gpio_put(pin_b,1);
     }
-    if(cor == 2){
+    if(cor == 3){
         gpio_put(pin_r,1);
     }
-    if(cor == 3){
+    if(cor == 4){
         gpio_put(pin_y,1);
     }
 }
 
 void lose_colour(int cor){
-    if(cor == 0){
+    if(cor == 1){
         gpio_put(pin_g,0);
     }
-    if(cor == 1){
+    if(cor == 2){
         gpio_put(pin_b,0);
     }
-    if(cor == 2){
+    if(cor == 3){
         gpio_put(pin_r,0);
     }
-    if(cor == 3){
+    if(cor == 4){
         gpio_put(pin_y,0);
     }
 }
