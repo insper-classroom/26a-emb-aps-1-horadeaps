@@ -5,15 +5,22 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "lcd.h"
-const int botao_inicio =14;
+#include "tft_lcd_ili9341/gfx/gfx_ili9341.h"
+#include "tft_lcd_ili9341/ili9341/ili9341.h"
+#include "tft_lcd_ili9341/touch_resistive/touch_resistive.h"
+
+const int botao_inicio =12;
 const int botao_g =10;
 const int botao_b =11;
 const int botao_r =12;
 const int botao_y =13;
-
+#define SCREEN_ROTATION 1 // 0 = RETRATO, 1 = PAISAGEM
+const int width = 320;    // Variável global definida em gfx_ili9341.c que armazena a largura da tela
+const int height = 240; 
 
 
 volatile int flag_jogo = 0;
@@ -52,11 +59,23 @@ void btn_callback(uint gpio, uint32_t events)
         }
     }
 }
+
+void gera_lista(int lista[]){
+    for(int i = 0; i<100; i++){
+        lista[i] = (rand() % 4)+1;
+        printf("%d", lista[i]);
+    }
+}
 int main() {
     stdio_init_all();
-    lcd_init();
-    gpio_init(botao_inicio);
+    // lcd_init();
+    LCD_initDisplay();
+    gfx_init();
+    gfx_clear();
 
+    gpio_init(botao_inicio);
+    LCD_initDisplay();
+    LCD_setRotation(SCREEN_ROTATION);
     gpio_init(botao_g);
     gpio_init(botao_b);
     gpio_init(botao_r);
@@ -85,25 +104,40 @@ int main() {
     
     
     // area das variaveis
-    int lista[] = {1,2,3,4};
+    int lista[100]; // usar s range com o timer entre ligar e desligar
     int cont = 0;
+    int inicio =0;
     nivel = 1;
-    int tamanho = (sizeof(lista)/sizeof(lista[0]));
+    int tamanho;
 
     alarm_id_t alarm;
     
     while (true) {
         if(flag_jogo){
+
+            if(inicio == 0){
+                int seed = to_us_since_boot(get_absolute_time());
+                srand(seed);
+                gera_lista(lista);
+                tamanho = (sizeof(lista)/sizeof(lista[0]));
+            }
+            gfx_clear();
+            gfx_setTextSize(2);             // Tamanho 2 (12x16 pixels por caractere)
+            gfx_setTextColor(0x07E0);       // Verde
+            gfx_drawText(106, 25, "comecou");
+
             printf("Nivel: %d!\n",nivel);
             for(int i =0; i<nivel; i++){            //O nivel controla quantos leds vai ter a sequencia
                 set_colour(lista[i]);
-                sleep_ms(1000);
-                lose_colour(lista[i]);
+                sleep_ms(300);
+                // lose_colour(lista[i]);
             }
-            int game_time_ms=nivel*1000+1000;
+            int game_time_ms=nivel*3000+1000;
             alarm = add_alarm_in_ms(game_time_ms, alarm_callback, NULL, false);
             flag_jogo = 0;
             BTN_GAME_flag=0;
+            inicio = 1;
+
             printf("Valendo!\n");
         }
 
@@ -138,10 +172,11 @@ int main() {
         }
 
         if(flag_resposta_timeout){
-            printf("Time out error\n");
+            printf("tmepo passou\n");
             flag_resposta_timeout = 0;
             nivel = 1;
             cont=0;
+            inicio =0;
 
         }
     }

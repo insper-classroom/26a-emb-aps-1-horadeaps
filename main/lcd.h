@@ -3,6 +3,9 @@
 
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "tft_lcd_ili9341/gfx/gfx_ili9341.h"
+#include "tft_lcd_ili9341/ili9341/ili9341.h"
+#include "tft_lcd_ili9341/touch_resistive/touch_resistive.h"
 
 #define pin_g 2
 #define pin_b 3
