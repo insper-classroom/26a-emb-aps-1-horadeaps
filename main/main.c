@@ -57,7 +57,7 @@ int64_t alarm_callback(alarm_id_t id, void *user_data)
 
 void btn_callback(uint gpio, uint32_t events)
 {
-    if (events == 0x08)
+    if (events == 0x04)
     {
         if (gpio == botao_inicio)
         {
@@ -244,6 +244,10 @@ int main()
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
             gfx_drawText(106, 25, "valendo");
+            flag_g=0;
+            flag_b=0;
+            flag_r=0;
+            flag_y=0;
             valendo = 1;
             sleep_ms(200);
             // printf("Valendo!\n");
@@ -257,6 +261,7 @@ int main()
                 wav_position=0;
                 len_audio=Green_DATA_LENGTH;
                 p_audio=Green_DATA;
+                sleep_ms(500);
             }
             else
             {
@@ -278,6 +283,7 @@ int main()
                 wav_position=0;
                 len_audio=Blue_DATA_LENGTH;
                 p_audio=Blue_DATA;
+                sleep_ms(500);
             }
             else
             {
@@ -298,6 +304,7 @@ int main()
                 wav_position=0;
                 len_audio=Red_DATA_LENGTH;
                 p_audio=Red_DATA;
+                sleep_ms(500);
             }
             else
             {
@@ -319,6 +326,7 @@ int main()
                 wav_position=0;
                 len_audio=Yellow_DATA_LENGTH;
                 p_audio=Yellow_DATA;
+                sleep_ms(500);
             }
             else
             {
@@ -372,6 +380,7 @@ int main()
             flag_jogo = 1;
             valendo = 0;
             printf("Proximo nivel\n");
+            
         }
 
         if (nivel > 10)
