@@ -402,7 +402,7 @@ int main()
             // printf("Você venceu!\n");
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
-            gfx_drawText(106, 25, "Você venceu!");
+            gfx_drawText(106, 25, "Voce venceu!");
             char pont_str[10];
             pont = (nivel - 1) * 10;
             nivel = 1;
