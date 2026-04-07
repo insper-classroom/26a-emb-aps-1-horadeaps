@@ -13,11 +13,23 @@
 #include "tft_lcd_ili9341/ili9341/ili9341.h"
 #include "tft_lcd_ili9341/touch_resistive/touch_resistive.h"
 
+#include "hardware/irq.h"  // interrupts
+#include "hardware/pwm.h"  // pwm 
+#include "hardware/sync.h" // wait for interrupt 
+#include "hardware/clocks.h" // redefined set_sys_clock_khz() 
+
+#include "fahhhhh.h"
+#include "Green.h"
+#include "Blue.h"
+#include "Red.h"
+#include "Yellow.h"
+
 const int botao_inicio = 9;
 const int botao_g = 10;
 const int botao_b = 11;
 const int botao_r = 12;
 const int botao_y = 13;
+const int AUDIO_PIN=28;
 #define SCREEN_ROTATION 1 // 0 = RETRATO, 1 = PAISAGEM
 const int width = 320;    // Variável global definida em gfx_ili9341.c que armazena a largura da tela
 const int height = 240;
@@ -31,6 +43,11 @@ volatile int flag_y = 0;
 volatile int flag_resposta_timeout = 0;
 volatile int nivel = 0;
 volatile int BTN_GAME_flag = 0;
+
+int wav_position=0;
+int len_audio=0;
+int *p_len=&len_audio;
+uint8_t *p_audio;
 
 int64_t alarm_callback(alarm_id_t id, void *user_data)
 {
@@ -82,6 +99,17 @@ void gera_lista(int lista[])
         printf("%d", lista[i]);
     }
 }
+
+void pwm_interrupt_handler() {
+    pwm_clear_irq(pwm_gpio_to_slice_num(AUDIO_PIN));    
+    if (wav_position < (*p_len<<3) - 1) { 
+        // set pwm level 
+        // allow the pwm value to repeat for 8 cycles this is >>3 
+        pwm_set_gpio_level(AUDIO_PIN, p_audio[wav_position>>3]);  
+        wav_position++;
+    }
+}
+
 int main()
 {
     stdio_init_all();
@@ -118,6 +146,26 @@ int main()
     gpio_set_irq_enabled_with_callback(botao_b, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback);
     gpio_set_irq_enabled_with_callback(botao_r, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback);
     gpio_set_irq_enabled_with_callback(botao_y, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &btn_callback);
+
+    //Declara e configura o PWM
+    set_sys_clock_khz(176000, true); 
+    gpio_set_function(AUDIO_PIN, GPIO_FUNC_PWM);
+    int audio_pin_slice = pwm_gpio_to_slice_num(AUDIO_PIN);
+
+    pwm_clear_irq(audio_pin_slice);
+    pwm_set_irq_enabled(audio_pin_slice, true);
+
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_interrupt_handler);  
+    irq_set_enabled(PWM_IRQ_WRAP, true);
+
+
+    pwm_config config = pwm_get_default_config();
+
+    pwm_config_set_clkdiv(&config, 8.0f); 
+    pwm_config_set_wrap(&config, 250); 
+    pwm_init(audio_pin_slice, &config, true);
+
+    pwm_set_gpio_level(AUDIO_PIN, 0);
 
     // area das variaveis
     int lista[100]; // usar s range com o timer entre ligar e desligar
@@ -164,6 +212,26 @@ int main()
             for (int i = 0; i < nivel; i++)
             { // O nivel controla quantos leds vai ter a sequencia
                 set_colour(lista[i]);
+                if (lista[i]==1){
+                    wav_position=0;
+                    len_audio=Green_DATA_LENGTH;
+                    p_audio=Green_DATA;
+                }else if (lista[i]==2){
+                    wav_position=0;
+                    len_audio=Blue_DATA_LENGTH;
+                    p_audio=Blue_DATA;
+                }else if (lista[i]==3){
+                    wav_position=0;
+                    len_audio=Red_DATA_LENGTH;
+                    p_audio=Red_DATA;
+                }else if (lista[i]==4){
+                    wav_position=0;
+                    len_audio=Yellow_DATA_LENGTH;
+                    p_audio=Yellow_DATA;
+                }
+                
+                
+                
                 sleep_ms(300);
                 // lose_colour(lista[i]);
             }
@@ -186,10 +254,16 @@ int main()
             if (lista[cont] == 1)
             { // verifica se apertou o botão correto
                 cont++;
+                wav_position=0;
+                len_audio=Green_DATA_LENGTH;
+                p_audio=Green_DATA;
             }
             else
             {
                 erro = 1;
+                wav_position=0;
+                len_audio=FAHHHHH_DATA_LENGTH;
+                p_audio=FAHHHHH_DATA;
             }
             flag_g = 0;
             // sleep_ms(400);
@@ -201,10 +275,16 @@ int main()
             if (lista[cont] == 2)
             { // verifica se apertou o botão correto
                 cont++;
+                wav_position=0;
+                len_audio=Blue_DATA_LENGTH;
+                p_audio=Blue_DATA;
             }
             else
             {
                 erro = 1;
+                wav_position=0;
+                len_audio=FAHHHHH_DATA_LENGTH;
+                p_audio=FAHHHHH_DATA;
             }
             flag_b = 0;
             // sleep_ms(400);
@@ -215,10 +295,16 @@ int main()
             if (lista[cont] == 3)
             { // verifica se apertou o botão correto
                 cont++;
+                wav_position=0;
+                len_audio=Red_DATA_LENGTH;
+                p_audio=Red_DATA;
             }
             else
             {
                 erro = 1;
+                wav_position=0;
+                len_audio=FAHHHHH_DATA_LENGTH;
+                p_audio=FAHHHHH_DATA;
             }
             flag_r = 0;
             // sleep_ms(400);
@@ -230,10 +316,16 @@ int main()
             if (lista[cont] == 4)
             { // verifica se apertou o botão correto
                 cont++;
+                wav_position=0;
+                len_audio=Yellow_DATA_LENGTH;
+                p_audio=Yellow_DATA;
             }
             else
             {
                 erro = 1;
+                wav_position=0;
+                len_audio=FAHHHHH_DATA_LENGTH;
+                p_audio=FAHHHHH_DATA;
             }
             flag_y = 0;
             // sleep_ms(400);
@@ -270,35 +362,7 @@ int main()
             valendo = 0;
             sleep_ms(2000);
         }
-        // if (BTN_GAME_flag == lista[cont])
-        // { // verifica se apertou o botão correto
-        //     printf("Acertou\n");
-        //     cont++;
-        //     sleep_ms(200);
-        //     BTN_GAME_flag = 0;
-        // }
-        // else if (BTN_GAME_flag != lista[cont] && BTN_GAME_flag != 0)
-        // { // Se errar zera a contagem e os niveis
-        //     printf("botao: %d, cor: %d \n", BTN_GAME_flag, lista[cont]);
 
-        //     char pont_str[10];
-        //     int pont = (nivel-1)*10;
-        //     snprintf(pont_str, sizeof(pont_str), "%d", pont);
-        //     gfx_clear();
-        //     gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
-        //     gfx_setTextColor(0x07E0); // Verde
-        //     gfx_drawText(106, 25, "errou");
-        //     gfx_drawText(106, 45, "pontos");
-        //     gfx_drawText(206, 45, pont_str);
-        //     printf("Errou\n");
-        //     sleep_ms(200);
-        //     cancel_alarm(alarm);
-        //     BTN_GAME_flag = 0;
-        //     cont = 0;
-        //     nivel = 1;
-        //     inicio = 0;
-        //     sleep_ms(2000);
-        // }
 
         if (cont == nivel)
         {
@@ -310,7 +374,7 @@ int main()
             printf("Proximo nivel\n");
         }
 
-        if (nivel > 100)
+        if (nivel > 10)
         {
             nivel = 1;
             cancel_alarm(alarm);
@@ -343,6 +407,10 @@ int main()
             cont = 0;
             inicio = 0;
             valendo = 0;
+
+            wav_position=0;
+            len_audio=FAHHHHH_DATA_LENGTH;
+            p_audio=FAHHHHH_DATA;
         }
     }
 }

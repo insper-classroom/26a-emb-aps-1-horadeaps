@@ -29,6 +29,11 @@ target_link_libraries(pico_emb
     pico_stdlib
     hardware_spi
     hardware_adc
+    hardware_dma
+    hardware_pio
+    hardware_timer
+    hardware_clocks
+    hardware_pwm
 )
 
 # create map/bin/hex/uf2 file etc.
