@@ -23,6 +23,7 @@
 #include "Blue.h"
 #include "Red.h"
 #include "Yellow.h"
+#include "Win.h"
 
 const int botao_inicio = 9;
 const int botao_g = 10;
@@ -173,6 +174,8 @@ int main()
     int inicio = 0;
     int valendo = 0;
     nivel = 1;
+    int recorde = 0;
+    int pont = 0;
     alarm_id_t alarm;
     int erro = 0;
     while (true)
@@ -195,7 +198,7 @@ int main()
 
             char nivel_str[10];
             char pont_str[10];
-            int pont = (nivel - 1) * 10;
+            pont = (nivel - 1) * 10;
             snprintf(nivel_str, sizeof(nivel_str), "%d", nivel);
             snprintf(pont_str, sizeof(nivel_str), "%d", pont);
 
@@ -345,14 +348,20 @@ int main()
             // printf("botao: %d, cor: %d \n", BTN_GAME_flag, lista[cont]);
 
             char pont_str[10];
-            int pont = (nivel - 1) * 10;
+            pont = (nivel - 1) * 10;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_clear();
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
-            gfx_drawText(106, 25, "errou");
-            gfx_drawText(106, 45, "pontos");
+            gfx_drawText(106, 25, "Errou");
+            gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
+
+            char rec_str[10];
+            snprintf(rec_str, sizeof(rec_str), "%d", recorde);
+            gfx_drawText(106, 65, "Recorde");
+            gfx_drawText(206, 65, rec_str);
+
             printf("Errou\n");
             sleep_ms(200);
             cancel_alarm(alarm);
@@ -383,21 +392,30 @@ int main()
             
         }
 
-        if (nivel > 10)
+        if (nivel > 4)
         {
-            nivel = 1;
             cancel_alarm(alarm);
             valendo = 0;
             flag_jogo = 0; // Finaliza o jogo
+            gfx_clear();
+
             // printf("Você venceu!\n");
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
             gfx_drawText(106, 25, "Você venceu!");
             char pont_str[10];
-            int pont = (nivel - 1) * 10;
+            pont = (nivel - 1) * 10;
+            nivel = 1;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
-            gfx_drawText(106, 45, "pontos");
+            gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
+            char rec_str[10];
+            snprintf(rec_str, sizeof(rec_str), "%d", recorde);
+            gfx_drawText(106, 65, "Recorde");
+            gfx_drawText(206, 65, rec_str);
+            wav_position=0;
+            len_audio=Win_DATA_LENGTH;
+            p_audio=Win_DATA;
         }
 
         if (flag_resposta_timeout)
@@ -405,12 +423,18 @@ int main()
             gfx_clear();
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
-            gfx_drawText(106, 25, "time out");
+            gfx_drawText(106, 25, "Time out");
             char pont_str[10];
-            int pont = (nivel - 1) * 10;
+            pont = (nivel - 1) * 10;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
-            gfx_drawText(106, 45, "pontos");
+            gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
+
+            char rec_str[10];
+            snprintf(rec_str, sizeof(rec_str), "%d", recorde);
+            gfx_drawText(106, 65, "Recorde");
+            gfx_drawText(206, 65, rec_str);
+
             flag_resposta_timeout = 0;
             nivel = 1;
             cont = 0;
@@ -420,6 +444,9 @@ int main()
             wav_position=0;
             len_audio=FAHHHHH_DATA_LENGTH;
             p_audio=FAHHHHH_DATA;
+        }
+        if(pont>recorde){
+            recorde = pont;
         }
     }
 }
