@@ -409,6 +409,7 @@ int main()
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
+            recorde=pont;
             char rec_str[10];
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
@@ -429,7 +430,6 @@ int main()
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
-            recorde=pont;
             char rec_str[10];
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
@@ -445,7 +445,7 @@ int main()
             len_audio=FAHHHHH_DATA_LENGTH;
             p_audio=FAHHHHH_DATA;
         }
-        
+
         if(pont>recorde){
             recorde = pont;
         }
