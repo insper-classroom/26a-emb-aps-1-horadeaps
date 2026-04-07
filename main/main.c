@@ -341,12 +341,12 @@ int main()
             flag_y = 0;
             // sleep_ms(400);
         }
-
+        
         if (erro)
         {
             // Se errar zera a contagem e os niveis
             // printf("botao: %d, cor: %d \n", BTN_GAME_flag, lista[cont]);
-
+            
             char pont_str[10];
             pont = (nivel - 1) * 10;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
@@ -356,22 +356,22 @@ int main()
             gfx_drawText(106, 25, "Errou");
             gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
-
+            
             char rec_str[10];
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
             gfx_drawText(206, 65, rec_str);
-
+            
             printf("Errou\n");
             sleep_ms(200);
             cancel_alarm(alarm);
             // BTN_GAME_flag = 0;
-
+            
             flag_b = 0;
             flag_g = 0;
             flag_y = 0;
             flag_r = 0;
-
+            
             erro = 0;
             cont = 0;
             nivel = 1;
@@ -379,8 +379,8 @@ int main()
             valendo = 0;
             sleep_ms(2000);
         }
-
-
+        
+        
         if (cont == nivel)
         {
             cancel_alarm(alarm); // avança para o proximo nivel
@@ -391,14 +391,14 @@ int main()
             printf("Proximo nivel\n");
             
         }
-
+        
         if (nivel > 4)
         {
             cancel_alarm(alarm);
             valendo = 0;
             flag_jogo = 0; // Finaliza o jogo
             gfx_clear();
-
+            
             // printf("Você venceu!\n");
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
@@ -417,7 +417,7 @@ int main()
             len_audio=Win_DATA_LENGTH;
             p_audio=Win_DATA;
         }
-
+        
         if (flag_resposta_timeout)
         {
             gfx_clear();
@@ -429,22 +429,23 @@ int main()
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
-
+            recorde=pont;
             char rec_str[10];
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
             gfx_drawText(206, 65, rec_str);
-
+            
             flag_resposta_timeout = 0;
             nivel = 1;
             cont = 0;
             inicio = 0;
             valendo = 0;
-
+            
             wav_position=0;
             len_audio=FAHHHHH_DATA_LENGTH;
             p_audio=FAHHHHH_DATA;
         }
+        
         if(pont>recorde){
             recorde = pont;
         }
