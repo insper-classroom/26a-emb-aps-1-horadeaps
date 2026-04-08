@@ -183,8 +183,8 @@ int main()
     alarm_id_t alarm;
     int erro = 0;
     int rec_beat=0;
-    long time_s=0;
-    long time_e=0;
+    long time_s;
+    long time_e;
 
     while (true)
     {
