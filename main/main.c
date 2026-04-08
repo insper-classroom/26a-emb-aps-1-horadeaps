@@ -115,6 +115,7 @@ void pwm_interrupt_handler() {
 
 int main()
 {
+    //salvar_valor(0);
     stdio_init_all();
     // lcd_init();
     LCD_initDisplay();
@@ -370,9 +371,10 @@ int main()
                 len_audio=FAHHHHH_DATA_LENGTH;
                 p_audio=FAHHHHH_DATA;
             }else{
-                 wav_position=0;
+                wav_position=0;
                 len_audio=Win_DATA_LENGTH;
                 p_audio=Win_DATA;
+                rec_beat=0;
             }
             
             
@@ -457,9 +459,10 @@ int main()
                 len_audio=FAHHHHH_DATA_LENGTH;
                 p_audio=FAHHHHH_DATA;
             }else{
-                 wav_position=0;
+                wav_position=0;
                 len_audio=Win_DATA_LENGTH;
                 p_audio=Win_DATA;
+                rec_beat=0;
             }
         }
 
