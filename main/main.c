@@ -18,6 +18,8 @@
 #include "hardware/sync.h" // wait for interrupt 
 #include "hardware/clocks.h" // redefined set_sys_clock_khz() 
 
+#include "Save.h"
+
 #include "fahhhhh.h"
 #include "Green.h"
 #include "Blue.h"
@@ -174,10 +176,12 @@ int main()
     int inicio = 0;
     int valendo = 0;
     nivel = 1;
-    int recorde = 0;
+    int recorde = ler_valor();
     int pont = 0;
     alarm_id_t alarm;
     int erro = 0;
+    int rec_beat=0;
+
     while (true)
     {
         if (flag_jogo)
@@ -193,7 +197,13 @@ int main()
                 gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
                 gfx_setTextColor(0x07E0); // Verde
                 gfx_drawText(106, 25, "inicio de jogo");
-                sleep_ms(300);
+
+                char rec_str[10];
+                snprintf(rec_str, sizeof(rec_str), "%d", recorde);
+                gfx_drawText(106, 65, "Recorde");
+                gfx_drawText(206, 65, rec_str);
+
+                sleep_ms(1000);
             }
 
             char nivel_str[10];
@@ -269,9 +279,6 @@ int main()
             else
             {
                 erro = 1;
-                wav_position=0;
-                len_audio=FAHHHHH_DATA_LENGTH;
-                p_audio=FAHHHHH_DATA;
             }
             flag_g = 0;
             // sleep_ms(400);
@@ -291,9 +298,6 @@ int main()
             else
             {
                 erro = 1;
-                wav_position=0;
-                len_audio=FAHHHHH_DATA_LENGTH;
-                p_audio=FAHHHHH_DATA;
             }
             flag_b = 0;
             // sleep_ms(400);
@@ -312,9 +316,6 @@ int main()
             else
             {
                 erro = 1;
-                wav_position=0;
-                len_audio=FAHHHHH_DATA_LENGTH;
-                p_audio=FAHHHHH_DATA;
             }
             flag_r = 0;
             // sleep_ms(400);
@@ -334,9 +335,6 @@ int main()
             else
             {
                 erro = 1;
-                wav_position=0;
-                len_audio=FAHHHHH_DATA_LENGTH;
-                p_audio=FAHHHHH_DATA;
             }
             flag_y = 0;
             // sleep_ms(400);
@@ -366,6 +364,17 @@ int main()
             sleep_ms(200);
             cancel_alarm(alarm);
             // BTN_GAME_flag = 0;
+            if (!rec_beat)
+            {
+                wav_position=0;
+                len_audio=FAHHHHH_DATA_LENGTH;
+                p_audio=FAHHHHH_DATA;
+            }else{
+                 wav_position=0;
+                len_audio=Win_DATA_LENGTH;
+                p_audio=Win_DATA;
+            }
+            
             
             flag_b = 0;
             flag_g = 0;
@@ -392,7 +401,7 @@ int main()
             
         }
         
-        if (nivel > 10)
+        if (nivel > 100)
         {
             cancel_alarm(alarm);
             valendo = 0;
@@ -410,6 +419,7 @@ int main()
             gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
             recorde=pont;
+            salvar_valor((uint32_t) recorde);
             char rec_str[10];
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
@@ -441,13 +451,22 @@ int main()
             inicio = 0;
             valendo = 0;
             
-            wav_position=0;
-            len_audio=FAHHHHH_DATA_LENGTH;
-            p_audio=FAHHHHH_DATA;
+            if (!rec_beat)
+            {
+                wav_position=0;
+                len_audio=FAHHHHH_DATA_LENGTH;
+                p_audio=FAHHHHH_DATA;
+            }else{
+                 wav_position=0;
+                len_audio=Win_DATA_LENGTH;
+                p_audio=Win_DATA;
+            }
         }
 
         if(pont>recorde){
             recorde = pont;
+            salvar_valor((uint32_t) recorde);
+            rec_beat=1;
         }
     }
 }

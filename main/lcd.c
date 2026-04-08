@@ -13,31 +13,35 @@ void lcd_init(){
 }
 
 void set_colour(int cor){
-    int largura = 300;
-    int altura =200;
-    int pos_x = 10;
-    int pos_y = 20;
+    int largura = 150;
+    int altura =120;
+    int pos_x = 105;
+    int pos_y = 70;
     if(cor == 1){
         // gpio_put(pin_g,1);
-        gfx_clear();
+        // gfx_clear();
+        gfx_fillRect(pos_x,pos_y, largura, altura, 0x0000);
         gfx_fillRect(pos_x,pos_y, largura, altura, 0x07E0);
 
     }
     if(cor == 2){
         // gpio_put(pin_b,1);
-        gfx_clear();
+        // gfx_clear();
+        gfx_fillRect(pos_x,pos_y, largura, altura, 0x0000);
         gfx_fillRect(pos_x,pos_y, largura, altura, 0x001F);
 
     }
     if(cor == 3){
         // gpio_put(pin_r,1);
-        gfx_clear();
+        gfx_fillRect(pos_x,pos_y, largura, altura, 0x0000);
+        // gfx_clear();
         gfx_fillRect(pos_x,pos_y, largura, altura, 0xF800);
 
     }
     if(cor == 4){
         // gpio_put(pin_y,1);
-        gfx_clear();
+        // gfx_clear();
+        gfx_fillRect(pos_x,pos_y, largura, altura, 0x0000);
         gfx_fillRect(pos_x,pos_y, largura, altura, 0xFFE0);
 
     }

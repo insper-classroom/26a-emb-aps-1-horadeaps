@@ -10,6 +10,9 @@ add_executable(pico_emb
 
     # Touch
     tft_lcd_ili9341/touch_resistive/touch_resistive.c
+
+    #Save
+    Save.c
 )
 
 set_target_properties(pico_emb PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -34,6 +37,7 @@ target_link_libraries(pico_emb
     hardware_timer
     hardware_clocks
     hardware_pwm
+    hardware_flash
 )
 
 # create map/bin/hex/uf2 file etc.
