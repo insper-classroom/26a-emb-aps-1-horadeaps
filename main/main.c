@@ -238,7 +238,7 @@ int main()
                 sleep_ms(300);
                 // lose_colour(lista[i]);
             }
-            int game_time_ms = nivel * 3000 + 1000;
+            int game_time_ms = nivel * 1000 + 1000;
             alarm = add_alarm_in_ms(game_time_ms, alarm_callback, NULL, false);
             flag_jogo = 0;
             BTN_GAME_flag = 0;
@@ -392,7 +392,7 @@ int main()
             
         }
         
-        if (nivel > 4)
+        if (nivel > 10)
         {
             cancel_alarm(alarm);
             valendo = 0;
