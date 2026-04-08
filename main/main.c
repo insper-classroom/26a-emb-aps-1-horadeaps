@@ -23,7 +23,7 @@
 #include "Blue.h"
 #include "Red.h"
 #include "Yellow.h"
-#include "Win.h"
+#include "win.h"
 
 const int botao_inicio = 9;
 const int botao_g = 10;
