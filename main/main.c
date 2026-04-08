@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "lcd.h"
@@ -182,6 +183,8 @@ int main()
     alarm_id_t alarm;
     int erro = 0;
     int rec_beat=0;
+    long time_s=0;
+    long time_e=0;
 
     while (true)
     {
@@ -209,7 +212,6 @@ int main()
 
             char nivel_str[10];
             char pont_str[10];
-            pont = (nivel - 1) * 10;
             snprintf(nivel_str, sizeof(nivel_str), "%d", nivel);
             snprintf(pont_str, sizeof(nivel_str), "%d", pont);
 
@@ -264,6 +266,8 @@ int main()
             flag_y=0;
             valendo = 1;
             sleep_ms(200);
+            time_s=to_ms_since_boot(get_absolute_time());
+
             // printf("Valendo!\n");
         }
         if (flag_g && valendo)
@@ -347,7 +351,6 @@ int main()
             // printf("botao: %d, cor: %d \n", BTN_GAME_flag, lista[cont]);
             
             char pont_str[10];
-            pont = (nivel - 1) * 10;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_clear();
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
@@ -360,7 +363,7 @@ int main()
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
             gfx_drawText(206, 65, rec_str);
-            
+            pont = 0;
             printf("Errou\n");
             sleep_ms(200);
             cancel_alarm(alarm);
@@ -395,6 +398,12 @@ int main()
         if (cont == nivel)
         {
             cancel_alarm(alarm); // avança para o proximo nivel
+            time_e=to_ms_since_boot(get_absolute_time());
+            int pe=nivel*1000-(time_e-time_s);
+            if (pe<0){
+                pe=1;
+            }
+            pont=pont+pe;
             nivel++;
             cont = 0;
             flag_jogo = 1;
@@ -409,13 +418,11 @@ int main()
             valendo = 0;
             flag_jogo = 0; // Finaliza o jogo
             gfx_clear();
-            
             // printf("Você venceu!\n");
             gfx_setTextSize(2);       // Tamanho 2 (12x16 pixels por caractere)
             gfx_setTextColor(0x07E0); // Verde
             gfx_drawText(106, 25, "Voce venceu!");
             char pont_str[10];
-            pont = (nivel - 1) * 10;
             nivel = 1;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_drawText(106, 45, "Pontos");
@@ -438,10 +445,10 @@ int main()
             gfx_setTextColor(0x07E0); // Verde
             gfx_drawText(106, 25, "Time out");
             char pont_str[10];
-            pont = (nivel - 1) * 10;
             snprintf(pont_str, sizeof(pont_str), "%d", pont);
             gfx_drawText(106, 45, "Pontos");
             gfx_drawText(206, 45, pont_str);
+            pont = 0;
             char rec_str[10];
             snprintf(rec_str, sizeof(rec_str), "%d", recorde);
             gfx_drawText(106, 65, "Recorde");
